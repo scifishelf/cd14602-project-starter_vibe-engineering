@@ -85,10 +85,158 @@ starter/
 └── docs/                      # Project documentation
 ```
 
+### Module Dependency Diagram
+
+```mermaid
+graph TD
+    MAIN["main.py<br/><i>CLI Entry Point</i>"]
+    LOADER["flashcard_loader.py<br/><i>Load & Validate</i>"]
+    ENGINE["quiz_engine.py<br/><i>Strategy + Factory</i>"]
+    SESSION["quiz_session.py<br/><i>Orchestration</i>"]
+    DISPLAY["display.py<br/><i>Terminal UI</i>"]
+    MODELS["models.py<br/><i>Dataclasses</i>"]
+    FH["file_handler.py<br/><i>JSON I/O</i>"]
+
+    MAIN --> LOADER
+    MAIN --> ENGINE
+    MAIN --> SESSION
+    MAIN --> DISPLAY
+    LOADER --> FH
+    LOADER --> MODELS
+    ENGINE --> MODELS
+    SESSION --> ENGINE
+    SESSION --> DISPLAY
+    SESSION --> MODELS
+```
+
 ### Design Patterns
 
-- **Strategy Pattern** (`QuizMode` ABC): Each quiz mode implements a common interface with different card-ordering algorithms
-- **Factory Pattern** (`QuizModeFactory`): Creates the appropriate mode instance from a string name, decoupling creation from usage
+#### Strategy Pattern — Quiz Modes
+
+```mermaid
+classDiagram
+    class QuizMode {
+        <<abstract>>
+        +next_card() Optional~Flashcard~
+        +has_more() bool
+        +reset() None
+        +record_result(card, correct) None
+    }
+    class SequentialMode {
+        -_cards: List~Flashcard~
+        -_index: int
+        +next_card() Optional~Flashcard~
+        +has_more() bool
+        +reset() None
+    }
+    class RandomMode {
+        -_original: List~Flashcard~
+        -_cards: List~Flashcard~
+        -_index: int
+        +next_card() Optional~Flashcard~
+        +has_more() bool
+        +reset() None
+    }
+    class AdaptiveMode {
+        -_original: List~Flashcard~
+        -_queue: List~Flashcard~
+        -_index: int
+        +next_card() Optional~Flashcard~
+        +has_more() bool
+        +reset() None
+        +record_result(card, correct) None
+    }
+
+    QuizMode <|-- SequentialMode
+    QuizMode <|-- RandomMode
+    QuizMode <|-- AdaptiveMode
+```
+
+#### Factory Pattern — Mode Creation
+
+```mermaid
+classDiagram
+    class QuizModeFactory {
+        -_modes: Dict~str, Type~
+        +create(mode_name, cards)$ QuizMode
+        +available_modes()$ List~str~
+    }
+    class QuizMode {
+        <<abstract>>
+    }
+
+    QuizModeFactory ..> QuizMode : creates
+    QuizModeFactory ..> SequentialMode : "sequential"
+    QuizModeFactory ..> RandomMode : "random"
+    QuizModeFactory ..> AdaptiveMode : "adaptive"
+```
+
+### Quiz Session Flowchart
+
+```mermaid
+flowchart TD
+    START([python main.py -f deck.json -m mode]) --> PARSE[Parse CLI arguments]
+    PARSE --> LOAD[FlashcardLoader.load]
+    LOAD -->|Invalid JSON| ERR1[/Error message + exit 1/]
+    LOAD -->|Valid| FACTORY[QuizModeFactory.create]
+    FACTORY --> WELCOME[Display welcome banner]
+    WELCOME --> CHECK{mode.has_more?}
+
+    CHECK -->|No| STATS[Display session statistics]
+    CHECK -->|Yes| NEXT[mode.next_card]
+    NEXT --> SHOW[Display question]
+    SHOW --> INPUT[Get user answer]
+
+    INPUT -->|"exit"| STATS
+    INPUT -->|KeyboardInterrupt| INTERRUPTED[Display interrupted message]
+    INTERRUPTED --> STATS
+
+    INPUT -->|Answer| COMPARE[Compare answer<br/>case-insensitive]
+    COMPARE -->|Correct| GREEN[Show green feedback]
+    COMPARE -->|Incorrect| RED[Show red feedback]
+
+    GREEN --> RECORD[Record result on card]
+    RED --> RECORD
+
+    RECORD --> ADAPTIVE{Adaptive mode?}
+    ADAPTIVE -->|Yes, incorrect| REQUEUE[Append card to queue]
+    ADAPTIVE -->|Otherwise| CHECK
+    REQUEUE --> CHECK
+
+    STATS --> DETAILED{--stats flag?}
+    DETAILED -->|Yes| MISSED[Show missed cards for review]
+    DETAILED -->|No| DONE([End])
+    MISSED --> DONE
+```
+
+### Data Model Overview
+
+```mermaid
+classDiagram
+    class Flashcard {
+        +front: str
+        +back: str
+        +times_shown: int
+        +times_correct: int
+        +times_incorrect int
+        +accuracy float
+    }
+    class QuizResult {
+        +card: Flashcard
+        +user_answer: str
+        +is_correct: bool
+    }
+    class SessionStats {
+        +total_questions: int
+        +correct_answers: int
+        +results: List~QuizResult~
+        +accuracy_percent float
+        +missed_cards List~Flashcard~
+    }
+
+    SessionStats o-- QuizResult : contains
+    QuizResult --> Flashcard : references
+```
 
 ## Testing
 
