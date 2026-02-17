@@ -43,6 +43,7 @@ class SequentialMode(QuizMode):
         self._index = 0
 
     def next_card(self) -> Optional[Flashcard]:
+        """Return the next card in order, or None if all shown."""
         if self._index >= len(self._cards):
             return None
         card = self._cards[self._index]
@@ -50,9 +51,11 @@ class SequentialMode(QuizMode):
         return card
 
     def has_more(self) -> bool:
+        """Return True if there are cards remaining."""
         return self._index < len(self._cards)
 
     def reset(self) -> None:
+        """Reset to the beginning of the sequence."""
         self._index = 0
 
 
@@ -66,11 +69,13 @@ class RandomMode(QuizMode):
         self._shuffle()
 
     def _shuffle(self) -> None:
+        """Shuffle a fresh copy of the original cards."""
         self._cards = list(self._original)
         random.shuffle(self._cards)
         self._index = 0
 
     def next_card(self) -> Optional[Flashcard]:
+        """Return the next card in shuffled order, or None if all shown."""
         if self._index >= len(self._cards):
             return None
         card = self._cards[self._index]
@@ -78,9 +83,11 @@ class RandomMode(QuizMode):
         return card
 
     def has_more(self) -> bool:
+        """Return True if there are cards remaining."""
         return self._index < len(self._cards)
 
     def reset(self) -> None:
+        """Reshuffle and start over."""
         self._shuffle()
 
 
@@ -93,6 +100,7 @@ class AdaptiveMode(QuizMode):
         self._index = 0
 
     def next_card(self) -> Optional[Flashcard]:
+        """Return the next card from the queue, or None if finished."""
         if self._index >= len(self._queue):
             return None
         card = self._queue[self._index]
@@ -100,9 +108,11 @@ class AdaptiveMode(QuizMode):
         return card
 
     def has_more(self) -> bool:
+        """Return True if there are cards remaining in the queue."""
         return self._index < len(self._queue)
 
     def reset(self) -> None:
+        """Reset to the original card list, discarding re-queued cards."""
         self._queue = list(self._original)
         self._index = 0
 
