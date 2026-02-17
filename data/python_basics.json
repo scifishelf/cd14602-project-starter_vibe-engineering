@@ -1,0 +1,50 @@
+[
+  {
+    "front": "What keyword is used to define a function in Python?",
+    "back": "def"
+  },
+  {
+    "front": "What is the output of type([]) in Python?",
+    "back": "<class 'list'>"
+  },
+  {
+    "front": "Which built-in function returns the length of an object?",
+    "back": "len"
+  },
+  {
+    "front": "What keyword creates a class in Python?",
+    "back": "class"
+  },
+  {
+    "front": "What does the 'self' parameter refer to in a class method?",
+    "back": "The instance of the class"
+  },
+  {
+    "front": "What is a list comprehension?",
+    "back": "A concise way to create lists using a single line of code"
+  },
+  {
+    "front": "What is the difference between a list and a tuple?",
+    "back": "Lists are mutable, tuples are immutable"
+  },
+  {
+    "front": "What does PEP 8 define?",
+    "back": "Python's style guide for code formatting"
+  },
+  {
+    "front": "What is a decorator in Python?",
+    "back": "A function that modifies the behavior of another function"
+  },
+  {
+    "front": "What module is used for writing unit tests in Python?",
+    "back": "unittest"
+  },
+  {
+    "front": "What is the purpose of __init__ in a Python class?",
+    "back": "It is the constructor method that initializes object attributes"
+  },
+  {
+    "front": "What does the 'with' statement do in Python?",
+    "back": "It provides a context manager for resource management"
+  }
+]

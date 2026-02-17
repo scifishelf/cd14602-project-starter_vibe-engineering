@@ -1,0 +1,22 @@
+[
+  {
+    "front": "What is the capital of France?",
+    "back": "Paris"
+  },
+  {
+    "front": "What is the largest planet in our solar system?",
+    "back": "Jupiter"
+  },
+  {
+    "front": "What is the chemical symbol for water?",
+    "back": "H2O"
+  },
+  {
+    "front": "Who wrote 'Romeo and Juliet'?",
+    "back": "William Shakespeare"
+  },
+  {
+    "front": "What is the speed of light in km/s (approximately)?",
+    "back": "300000"
+  }
+]

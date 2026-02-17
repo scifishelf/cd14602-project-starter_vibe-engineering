@@ -1,0 +1,16 @@
+{
+  "cards": [
+    {
+      "front": "What does HTML stand for?",
+      "back": "HyperText Markup Language"
+    },
+    {
+      "front": "What does CSS stand for?",
+      "back": "Cascading Style Sheets"
+    },
+    {
+      "front": "What does API stand for?",
+      "back": "Application Programming Interface"
+    }
+  ]
+}
